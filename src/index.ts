@@ -20,12 +20,29 @@ app.post("/api/signup", signupValidator, async (c) => {
     setCookie(c, "authToken", token, cookieOpts);
     //send success response
     return c.json({
-      message: 'User registered successfully',
-      user: { id: userId, email},
-    })
+      message: "User registered successfully",
+      user: { id: userId, email },
+    });
   } catch (error) {
     //send an error message
-    
+    if (
+      error instanceof Error &&
+      error.message.includes("UNIQUE constraint failed")
+    ) {
+      return c.json(
+        {
+          errors: ["Email already exists"],
+        },
+        409
+      );
+    }
+    console.error("signup error: ", error);
+    return c.json(
+      {
+        error: ["Internal server error"],
+      },
+      500
+    );
   }
 });
 
