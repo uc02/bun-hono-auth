@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it } from 'bun:test'
-import { insertUser } from './queries';
+import { getUserByEmail, insertUser } from './queries';
 import { createTestDb } from '../test/text-db';
 import { Database } from 'bun:sqlite'
 
@@ -19,8 +19,7 @@ describe('insertUser', () => {
     const email = 'text@text.com';
     const password = 'password123';
     const userId = await insertUser(db, email, password)
-    console.log(userId)
-    expect(userId).toBeDefined();
+     expect(userId).toBeDefined();
   });
 
   it('should throw an error if the email is already in the db', async () => {
@@ -31,7 +30,6 @@ describe('insertUser', () => {
     try {
       await insertUser(db, email, password)
     } catch (error) {
-      console.log(error)
       expect(error).toBeInstanceOf(Error)
       // @ts-ignore
       expect(error.message).toMatch(/UNIQUE constraint failed/)
@@ -48,5 +46,21 @@ describe('insertUser', () => {
      // @ts-ignore
      expect(error.message).toMatch(/password must not be empty/)
     }
+  })
+})
+
+describe('getUserByEmail', () => {
+  it('return a user by a given email', async () => {
+     const email = 'test@test.com';
+     const password = 'password123'
+     await insertUser(db, email, password)
+     const user = getUserByEmail(db, email)
+     expect(user).toBeDefined()
+  })
+
+  it('returns null when there is no user by that email', async() => {
+    const email = 'test@test.com'
+    const user = getUserByEmail(db, email);
+    expect(user).toBeNull()
   })
 })

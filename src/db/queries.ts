@@ -21,3 +21,14 @@ export const insertUser = async (
   const user = insertQuery.get(userId, email, passwordHash) as { id: UUID };
   return user.id;
 }
+
+export const getUserByEmail = (db: Database, email: string) => {
+  const userQuery = db.query(
+    'SELECT id, password_hash FROM users WHERE email = ?'
+  );
+  const user = userQuery.get(email) as {
+    id: string,
+    password_hash: string;
+  } | null
+  return user;
+}
