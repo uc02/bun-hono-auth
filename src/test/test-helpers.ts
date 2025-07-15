@@ -29,3 +29,14 @@ export const loginReq = (
     }),
   });
 };
+
+
+export const logoutReq = () => {
+  return new Request("http://localhost:3000/api/logout", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    }
+  });
+};
+
